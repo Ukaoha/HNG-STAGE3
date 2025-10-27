@@ -158,23 +158,33 @@ Access at: http://localhost:8000
 ### Hosting
 This project can be deployed to PHP-supported cloud platforms that support PHP and MySQL.
 
-#### For Railway (Recommended):
+#### For PXXL (Shared Hosting):
+1. Upload your project files to PXXL hosting
+2. Set up Aiven MySQL database (see Aiven setup above)
+3. Update your .env file with Aiven MySQL credentials
+4. Ensure the document root points to `public/` directory
+5. Make sure `cache/` directory is writable (chmod 755)
+6. Deploy and test the `/status` endpoint
+
+#### For Other Platforms:
+
+##### Railway (Cloud PaaS):
 1. Create a Railway project and connect to GitHub.
 2. Add a MySQL data source (Railway provides managed MySQL, free tier available).
 3. Set environment variables for DB connection.
 4. Deploy. The root directory is public/ for web server.
 5. Visit the deployed URL.
 
-#### For Heroku:
+##### Heroku:
 Heroku has ended free tiers, but you can use their paid dynos or alternatives like Render/Paused.
 
 #### Free MySQL Hosting Options:
-For testing/deploying with free MySQL:
-- PlanetScale: Free Hobby plan with MySQL-compatible database.
-- Aiven: Free credits for MySQL databases.
-- Neon: Free PostgreSQL tiers.
+For testing/deploying with free MySQL databases:
+- **Aiven**: Free credits ($200-300) for MySQL databases - *Recommended*
+- PlanetScale: Free Hobby plan with MySQL-compatible database
+- Neon: Free PostgreSQL tiers
 
-Use the MySQL database URL in .env DB_HOST.
+Use your chosen service's MySQL connection details in the .env file.
 
 ## Dependencies
 - slim/slim: ^4.0 (Slim Framework)
@@ -187,14 +197,24 @@ Use the MySQL database URL in .env DB_HOST.
 - ext-mysqli: * or ext-pdo_mysql: * (PHP MySQL extensions)
 
 ## Environment Variables
+For **Aiven MySQL** hosting:
 - `DB_CONNECTION=mysql`
-- `DB_HOST=localhost`
+- `DB_HOST=your-service-name-mysql.aivencloud.com` (Aiven host)
 - `DB_NAME=country_api`
-- `DB_USER=root`
-- `DB_PASS=` (your MySQL root password, if set)
+- `DB_USER=your-aiven-username`
+- `DB_PASS=your-aiven-password` (from Aiven connection parameters)
 - `DB_CHARSET=utf8mb4`
-- `APP_ENV=development`
-- `APP_DEBUG=true`
+- `APP_ENV=production` (or development for local)
+- `APP_DEBUG=false` (false for production)
+
+Your Aiven connection string `mysql://user:pass@host:port/db` becomes:
+```env
+DB_CONNECTION=mysql
+DB_HOST=host
+DB_USER=user
+DB_PASS=pass
+DB_NAME=db
+```
 
 ## Notes
 - Database: Uses MySQL for data persistence.
