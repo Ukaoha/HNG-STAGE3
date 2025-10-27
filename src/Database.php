@@ -22,6 +22,9 @@ class Database
         } else {
             // For MySQL if needed
             $dsn = 'mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'] . ';charset=' . ($_ENV['DB_CHARSET'] ?? 'utf8mb4');
+            if (isset($_ENV['DB_PORT']) && $_ENV['DB_PORT'] !== '3306') {
+                $dsn .= ';port=' . $_ENV['DB_PORT'];
+            }
         }
 
         try {
