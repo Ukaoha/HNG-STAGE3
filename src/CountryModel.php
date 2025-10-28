@@ -20,16 +20,16 @@ class CountryModel
     {
         $sql = "
             CREATE TABLE IF NOT EXISTS countries (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                capital TEXT,
-                region TEXT,
-                population INTEGER,
-                currency_code TEXT,
-                exchange_rate REAL,
-                estimated_gdp REAL,
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                capital VARCHAR(255),
+                region VARCHAR(255),
+                population BIGINT,
+                currency_code VARCHAR(10),
+                exchange_rate DECIMAL(15,4),
+                estimated_gdp DECIMAL(20,2),
                 flag_url TEXT,
-                last_refreshed_at TEXT DEFAULT CURRENT_TIMESTAMP
+                last_refreshed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
         ";
         $this->pdo->exec($sql);
@@ -51,9 +51,9 @@ class CountryModel
         }
 
         if ($sort === 'gdp_desc') {
-            $query .= " ORDER BY CASE WHEN estimated_gdp IS NULL THEN 0 ELSE 1 END DESC, estimated_gdp DESC";
+            $query .= " ORDER BY IF(estimated_gdp IS NULL, 0, 1), estimated_gdp DESC";
         } elseif ($sort === 'gdp_asc') {
-            $query .= " ORDER BY CASE WHEN estimated_gdp IS NULL THEN 1 ELSE 0 END ASC, estimated_gdp ASC";
+            $query .= " ORDER BY IF(estimated_gdp IS NULL, 1, 0), estimated_gdp ASC";
         }
 
         $stmt = $this->pdo->prepare($query);
@@ -138,7 +138,7 @@ class CountryModel
                 $existing = $this->findByName($name);
                 if ($existing) {
                     $stmt = $this->pdo->prepare(
-                        "UPDATE countries SET capital=?, region=?, population=?, currency_code=?, exchange_rate=?, estimated_gdp=?, flag_url=?, last_refreshed_at=CURRENT_TIMESTAMP WHERE name=?"
+                        "UPDATE countries SET capital=?, region=?, population=?, currency_code=?, exchange_rate=?, estimated_gdp=?, flag_url=?, last_refreshed_at=NOW() WHERE name=?"
                     );
                     $stmt->execute([$capital, $region, $population, $currency_code, $exchange_rate, $estimated_gdp, $flag_url, $name]);
                 } else {
