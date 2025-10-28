@@ -14,7 +14,7 @@ class Database
     private function __construct()
     {
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-        $dotenv->load();
+        $dotenv->safeLoad();
 
         $driver = trim($_ENV['DB_CONNECTION'] ?? 'sqlite');
         if ($driver === 'sqlite') {

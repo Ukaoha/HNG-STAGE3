@@ -10,7 +10,7 @@ use App\Database;
 use App\CountryModel;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
+$dotenv->safeLoad();
 
 // Ensure database exists (for SQLite)
 $dbFile = __DIR__ . '/..//database/country_api.sqlite';
