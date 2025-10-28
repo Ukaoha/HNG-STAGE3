@@ -26,7 +26,7 @@ $app->add(function ($request, $handler) {
 });
 
 $app->addRoutingMiddleware();
-$app->addErrorMiddleware($_ENV['APP_DEBUG'] ?? false, true, true);
+$app->addErrorMiddleware(true, true, true);
 
 // Routes
 
@@ -93,8 +93,9 @@ $app->delete('/countries/{name}', function (Request $request, Response $c, $args
 });
 
 $app->post('/countries/refresh', function (Request $request, Response $c) {
-    $model = new CountryModel();
+    ini_set('max_execution_time', 0);
     try {
+        $model = new CountryModel();
         $model->refreshData();
         $c->getBody()->write(json_encode(['message' => 'Refresh successful']));
         return $c->withHeader('Content-Type', 'application/json');
