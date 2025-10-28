@@ -29,7 +29,7 @@ class CountryModel
                 exchange_rate DECIMAL(15,4),
                 estimated_gdp DECIMAL(20,2),
                 flag_url TEXT,
-                last_refreshed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                last_refreshed_at TIMESTAMP
             ) ENGINE=InnoDB
         ";
         $this->pdo->exec($sql);
@@ -143,7 +143,7 @@ class CountryModel
                     $stmt->execute([$capital, $region, $population, $currency_code, $exchange_rate, $estimated_gdp, $flag_url, $name]);
                 } else {
                     $stmt = $this->pdo->prepare(
-                        "INSERT INTO countries (name, capital, region, population, currency_code, exchange_rate, estimated_gdp, flag_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                        "INSERT INTO countries (name, capital, region, population, currency_code, exchange_rate, estimated_gdp, flag_url, last_refreshed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())"
                     );
                     $stmt->execute([$name, $capital, $region, $population, $currency_code, $exchange_rate, $estimated_gdp, $flag_url]);
                 }
