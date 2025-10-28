@@ -95,22 +95,9 @@ $app->delete('/countries/{name}', function (Request $request, Response $c, $args
     return $c->withHeader('Content-Type', 'application/json');
 });
 
-$app->get('/countries/refresh', function (Request $request, Response $c) {
-    $model = new CountryModel();
-    try {
-        $model->refreshData();
-        $c->getBody()->write(json_encode(['message' => 'Refresh successful']));
-        return $c->withHeader('Content-Type', 'application/json');
-    } catch (Exception $e) {
-        $error = ['error' => $e->getMessage()];
-        $c->getBody()->write(json_encode($error));
-        return $c->withStatus(503)->withHeader('Content-Type', 'application/json');
-    }
-});
-
 $app->post('/countries/refresh', function (Request $request, Response $c) {
-    $model = new CountryModel();
     try {
+        $model = new CountryModel();
         $model->refreshData();
         $c->getBody()->write(json_encode(['message' => 'Refresh successful']));
         return $c->withHeader('Content-Type', 'application/json');
