@@ -158,22 +158,41 @@ Access at: http://localhost:8000
 ### Hosting
 This project can be deployed to PHP-supported cloud platforms that support PHP and MySQL.
 
-#### For PXXL (Shared Hosting):
-1. Upload your project files to PXXL hosting
-2. Set up Aiven MySQL database (see Aiven setup above)
-3. Update your .env file with Aiven MySQL credentials
-4. Ensure the document root points to `public/` directory
-5. Make sure `cache/` directory is writable (chmod 755)
-6. Deploy and test the `/status` endpoint
+#### For Railway (Cloud PaaS - Recommended):
+1. Create a Railway account and new project
+2. Connect your GitHub repository to Railway
+3. In Railway dashboard, add an Aiven MySQL service OR use Railway's built-in MySQL
+4. Set the following environment variables in Railway:
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=your-aiven-host.aivencloud.com
+   DB_NAME=defaultdb
+   DB_PORT=18630
+   DB_USER=your-aiven-username
+   DB_PASS=your-aiven-password
+   DB_CHARSET=utf8mb4
+   APP_ENV=production
+   APP_DEBUG=false
+   ```
+5. Create the countries table in your MySQL database:
+   ```sql
+   USE defaultdb;
+   CREATE TABLE countries (
+     id INT AUTO_INCREMENT PRIMARY KEY,
+     name VARCHAR(255) UNIQUE NOT NULL,
+     capital VARCHAR(255),
+     region VARCHAR(100),
+     population BIGINT NOT NULL,
+     currency_code VARCHAR(10),
+     exchange_rate DOUBLE,
+     estimated_gdp DECIMAL(20,2),
+     flag_url VARCHAR(500),
+     last_refreshed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+   );
+   ```
+6. Railway will auto-deploy and provide your URL
 
 #### For Other Platforms:
-
-##### Railway (Cloud PaaS):
-1. Create a Railway project and connect to GitHub.
-2. Add a MySQL data source (Railway provides managed MySQL, free tier available).
-3. Set environment variables for DB connection.
-4. Deploy. The root directory is public/ for web server.
-5. Visit the deployed URL.
 
 ##### Heroku:
 Heroku has ended free tiers, but you can use their paid dynos or alternatives like Render/Paused.
