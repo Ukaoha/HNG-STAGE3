@@ -18,7 +18,8 @@ class Database
 
         $driver = trim($_ENV['DB_CONNECTION'] ?? 'sqlite');
         if ($driver === 'sqlite') {
-            $dsn = 'sqlite:' . __DIR__ . '/../' . trim($_ENV['DB_DATABASE']);
+            $dbPath = trim($_ENV['DB_DATABASE'] ?? 'database/country_api.sqlite');
+            $dsn = 'sqlite:' . __DIR__ . '/../' . $dbPath;
         } else {
             // For MySQL if needed
             $dsn = 'mysql:host=' . trim($_ENV['DB_HOST']) . ';dbname=' . trim($_ENV['DB_NAME']) . ';charset=' . (trim($_ENV['DB_CHARSET'] ?? 'utf8mb4'));
