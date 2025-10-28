@@ -162,6 +162,10 @@ class CountryModel
 
     private function generateSummaryImage()
     {
+        if (!extension_loaded('gd')) {
+            return; // Skip if GD not available
+        }
+
         // Get data
         $stmt = $this->pdo->prepare("SELECT COUNT(*) as total FROM countries");
         $stmt->execute();
@@ -175,10 +179,19 @@ class CountryModel
         $stmt->execute();
         $last_refresh = $stmt->fetch()['last'];
 
+        // Ensure cache directory exists
+        $cacheDir = __DIR__ . '/../cache';
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+        }
+
         // Create image
         $width = 600;
         $height = 400;
         $image = imagecreatetruecolor($width, $height);
+        if (!$image) {
+            return; // Failed to create image
+        }
         $white = imagecolorallocate($image, 255, 255, 255);
         $black = imagecolorallocate($image, 0, 0, 0);
         imagefill($image, 0, 0, $white);
@@ -198,7 +211,7 @@ class CountryModel
         }
 
         // Save to cache/summary.png
-        imagepng($image, __DIR__ . '/../cache/summary.png');
+        imagepng($image, $cacheDir . '/summary.png');
         imagedestroy($image);
     }
 
