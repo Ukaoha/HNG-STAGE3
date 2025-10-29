@@ -18,19 +18,20 @@ class Database
         $dotenv->safeLoad();
 
         $this->driver = 'mysql';
-        $host = trim($_ENV['DB_HOST'] ?? '');
-        $name = trim($_ENV['DB_NAME'] ?? '');
-        $user = trim($_ENV['DB_USER'] ?? '');
-        $pass = trim($_ENV['DB_PASS'] ?? '');
+        $host = getenv('DB_HOST') ?: trim($_ENV['DB_HOST'] ?? '');
+        $name = getenv('DB_NAME') ?: trim($_ENV['DB_NAME'] ?? '');
+        $user = getenv('DB_USER') ?: trim($_ENV['DB_USER'] ?? '');
+        $pass = getenv('DB_PASS') ?: trim($_ENV['DB_PASS'] ?? '');
         if (!$host || !$name || !$user) {
             throw new PDOException("Database configuration missing: DB_HOST, DB_NAME, DB_USER are required.");
         }
-        $dsn = 'mysql:host=' . $host . ';dbname=' . $name . ';charset=' . (trim($_ENV['DB_CHARSET'] ?? 'utf8mb4'));
-        $port = isset($_ENV['DB_PORT']) ? trim($_ENV['DB_PORT']) : null;
+        $charset = getenv('DB_CHARSET') ?: trim($_ENV['DB_CHARSET'] ?? 'utf8mb4');
+        $dsn = 'mysql:host=' . $host . ';dbname=' . $name . ';charset=' . $charset;
+        $port = getenv('DB_PORT') ?: trim($_ENV['DB_PORT'] ?? '');
         if ($port && $port !== '3306') {
             $dsn .= ';port=' . $port;
         }
-        $sslMode = trim($_ENV['DB_SSL_MODE'] ?? '');
+        $sslMode = getenv('DB_SSL_MODE') ?: trim($_ENV['DB_SSL_MODE'] ?? '');
         $pdoOptions = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -40,7 +41,7 @@ class Database
         }
 
         try {
-            $this->pdo = new PDO($dsn, $_ENV['DB_USER'] ?? null, $_ENV['DB_PASS'] ?? null, $pdoOptions);
+            $this->pdo = new PDO($dsn, $user, $pass, $pdoOptions);
         } catch (PDOException $e) {
             throw new PDOException($e->getMessage(), (int)$e->getCode());
         }
