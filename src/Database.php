@@ -18,7 +18,14 @@ class Database
         $dotenv->safeLoad();
 
         $this->driver = 'mysql';
-        $dsn = 'mysql:host=' . trim($_ENV['DB_HOST']) . ';dbname=' . trim($_ENV['DB_NAME']) . ';charset=' . (trim($_ENV['DB_CHARSET'] ?? 'utf8mb4'));
+        $host = trim($_ENV['DB_HOST'] ?? '');
+        $name = trim($_ENV['DB_NAME'] ?? '');
+        $user = trim($_ENV['DB_USER'] ?? '');
+        $pass = trim($_ENV['DB_PASS'] ?? '');
+        if (!$host || !$name || !$user) {
+            throw new PDOException("Database configuration missing: DB_HOST, DB_NAME, DB_USER are required.");
+        }
+        $dsn = 'mysql:host=' . $host . ';dbname=' . $name . ';charset=' . (trim($_ENV['DB_CHARSET'] ?? 'utf8mb4'));
         $port = isset($_ENV['DB_PORT']) ? trim($_ENV['DB_PORT']) : null;
         if ($port && $port !== '3306') {
             $dsn .= ';port=' . $port;
