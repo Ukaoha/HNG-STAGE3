@@ -18,20 +18,38 @@ class CountryModel
 
     private function createTableIfNotExists()
     {
-        $sql = "
-            CREATE TABLE IF NOT EXISTS countries (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                capital VARCHAR(255),
-                region VARCHAR(255),
-                population BIGINT,
-                currency_code VARCHAR(10),
-                exchange_rate DECIMAL(15,4),
-                estimated_gdp DECIMAL(20,2),
-                flag_url TEXT,
-                last_refreshed_at TIMESTAMP
-            ) ENGINE=InnoDB
-        ";
+        $driver = Database::getInstance()->getDriver();
+        if ($driver === 'sqlite') {
+            $sql = "
+                CREATE TABLE IF NOT EXISTS countries (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    capital TEXT,
+                    region TEXT,
+                    population INTEGER,
+                    currency_code TEXT,
+                    exchange_rate REAL,
+                    estimated_gdp REAL,
+                    flag_url TEXT,
+                    last_refreshed_at TEXT
+                )
+            ";
+        } else {
+            $sql = "
+                CREATE TABLE IF NOT EXISTS countries (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    capital VARCHAR(255),
+                    region VARCHAR(255),
+                    population BIGINT,
+                    currency_code VARCHAR(10),
+                    exchange_rate DECIMAL(15,4),
+                    estimated_gdp DECIMAL(20,2),
+                    flag_url TEXT,
+                    last_refreshed_at TIMESTAMP
+                ) ENGINE=InnoDB
+            ";
+        }
         $this->pdo->exec($sql);
     }
 

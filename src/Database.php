@@ -10,13 +10,15 @@ class Database
 {
     private static $instance = null;
     private $pdo;
+    private $driver;
 
     private function __construct()
     {
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
         $dotenv->safeLoad();
 
-        $driver = trim($_ENV['DB_CONNECTION'] ?? 'sqlite');
+        $this->driver = trim($_ENV['DB_CONNECTION'] ?? 'sqlite');
+        $driver = $this->driver;
         if ($driver === 'sqlite') {
             $dbPath = trim($_ENV['DB_DATABASE'] ?? 'database/country_api.sqlite');
             $dsn = 'sqlite:' . __DIR__ . '/../' . $dbPath;
@@ -55,5 +57,10 @@ class Database
     public function getConnection()
     {
         return $this->pdo;
+    }
+
+    public function getDriver()
+    {
+        return $this->driver;
     }
 }
