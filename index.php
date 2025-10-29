@@ -12,14 +12,6 @@ use App\CountryModel;
 $dotenv = Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->safeLoad();
 
-// For SQLite only - not needed for MySQL
-// Database initialization is handled in Database class
-
-$dbFile = __DIR__ . '//database/country_api.sqlite';
-if (!file_exists(dirname($dbFile))) {
-    mkdir(dirname($dbFile), 0777, true);
-}
-
 $app = AppFactory::create();
 
 $app->add(function ($request, $handler) {
