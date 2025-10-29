@@ -51,9 +51,9 @@ class CountryModel
         }
 
         if ($sort === 'gdp_desc') {
-            $query .= " ORDER BY IF(estimated_gdp IS NULL, 0, 1), estimated_gdp DESC";
+            $query .= " ORDER BY estimated_gdp IS NULL ASC, estimated_gdp DESC";
         } elseif ($sort === 'gdp_asc') {
-            $query .= " ORDER BY IF(estimated_gdp IS NULL, 1, 0), estimated_gdp ASC";
+            $query .= " ORDER BY estimated_gdp IS NULL ASC, estimated_gdp ASC";
         }
 
         $stmt = $this->pdo->prepare($query);
@@ -74,7 +74,8 @@ class CountryModel
     public function deleteByName($name)
     {
         $stmt = $this->pdo->prepare("DELETE FROM countries WHERE name = ?");
-        return $stmt->execute([$name]);
+        $stmt->execute([$name]);
+        return $stmt->rowCount();
     }
 
     public function getStatus()
@@ -89,14 +90,14 @@ class CountryModel
 
         return [
             'total_countries' => $total,
-            'last_refreshed_at' => $last,
+            'last_refreshed_at' => $last ? date('c', strtotime($last)) : null,
         ];
     }
 
     public function refreshData()
     {
         try {
-            $client = new Client();
+            $client = new Client(['timeout' => 30]);
 
             // Fetch countries
             $response = $client->get('https://restcountries.com/v2/all?fields=name,capital,region,population,flag,currencies');
